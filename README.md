@@ -1,1 +1,1 @@
-# abh_internship_api_testing
+API tests for internship auction app
