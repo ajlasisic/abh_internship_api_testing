@@ -1,94 +1,86 @@
 import { expect } from "@wdio/globals";
 import axios from "axios";
+import { API_BASE_URL } from "./globals.js";
+import { getRandomNumber, verifyObjectPropertiesExist, verifyResponseStatus } from "./apiUtils.js";
 
 describe("Categories API tests", () => {
-  it("Check status code", async () => {
-    await axios
-      .get("http://localhost:8080/api/categories")
-      .then(function (response) {
-        expect(response.status).toEqual(200);
-      });
+  it("Check status code - Categories API", async () => {
+    await axios.get(`${API_BASE_URL}/categories`).then(function (response) {
+      verifyResponseStatus(response.status, 200);
+    });
   });
-  it("Check object properties", async () => {
-    await axios
-      .get("http://localhost:8080/api/categories")
-      .then(function (response) {
-        let data = response.data;
-        data.forEach((category) => {
-          expect(category.id).toExist();
-          expect(category.name).toExist();
-          expect(category.subCategories).toExist();
-        });
+  it("Check object properties - Categories API", async () => {
+    await axios.get(`${API_BASE_URL}/categories`).then(function (response) {
+      let data = response.data;
+      data.forEach((product) => {
+        verifyObjectPropertiesExist(product, ["id", "name", "subCategories"]);
       });
+    });
   });
 });
+
 describe("Products API tests", () => {
-  it("Check status code", async () => {
-    await axios
-      .get("http://localhost:8080/api/products")
-      .then(function (response) {
-        expect(response.status).toEqual(200);
-      });
+  it("Check status code - Products API", async () => {
+    await axios.get(`${API_BASE_URL}/products`).then(function (response) {
+      verifyResponseStatus(response.status, 200);
+    });
   });
-  it("Check object properties", async () => {
-    await axios
-      .get("http://localhost:8080/api/products")
-      .then(function (response) {
-        let data = response.data.content;
-        data.forEach((product) => {
-          expect(product.id).toExist();
-          expect(product.name).toExist();
-          expect(product.description).toExist();
-          expect(product.startBid).toExist();
-          expect(product.highestBid).toExist();
-          expect(product.numberOfBids).toExist();
-          expect(product.dateStart).toExist();
-          expect(product.dateEnd).toExist();
-          expect(product.dateCreated).toExist();
-          expect(product.subCategory).toExist();
-          expect(product.images).toExist();
-          expect(product.user).toExist();
-        });
+  it("Check object properties - Products API", async () => {
+    await axios.get(`${API_BASE_URL}/products`).then(function (response) {
+      let data = response.data.content;
+      data.forEach((product) => {
+        verifyObjectPropertiesExist(product, [
+          "id",
+          "name",
+          "description",
+          "startBid",
+          "highestBid",
+          "numberOfBids",
+          "dateStart",
+          "dateEnd",
+          "dateCreated",
+          "subCategory",
+          "images",
+          "user",
+        ]);
       });
+    });
   });
-  it("End date bigger than start date", async () => {
-    await axios
-      .get("http://localhost:8080/api/products")
-      .then(function (response) {
-        let data = response.data.content;
-        data.forEach((product) => {
-          let startDate = new Date(product.dateStart);
-          let endDate = new Date(product.dateEnd);
-          expect(endDate).toBeGreaterThan(startDate);
-        });
+  it("End date bigger than start date - Products API", async () => {
+    await axios.get(`${API_BASE_URL}/products`).then(function (response) {
+      let data = response.data.content;
+      data.forEach((product) => {
+        let startDate = new Date(product.dateStart);
+        let endDate = new Date(product.dateEnd);
+        expect(endDate).toBeGreaterThan(startDate);
       });
+    });
   });
 });
-describe("Random product API tests", () => {
-  it("Check status code", async () => {
-    await axios
-      .get("http://localhost:8080/api/products/random")
-      .then(function (response) {
-        expect(response.status).toEqual(200);
+
+describe("Random Product API tests", () => {
+  it("Check status code - Random product API", async () => {
+    await axios.get(`${API_BASE_URL}/products/random`).then(function (response) {
+        verifyResponseStatus(response.status, 200);
       });
   });
-  it("Check object properties", async () => {
-    await axios
-      .get("http://localhost:8080/api/products/random")
-      .then(function (response) {
+  it("Check object properties - Random product API", async () => {
+    await axios.get(`${API_BASE_URL}/products/random`).then(function (response) {
         let data = response.data;
-        expect(data.id).toExist();
-        expect(data.name).toExist();
-        expect(data.description).toExist();
-        expect(data.startBid).toExist();
-        expect(data.highestBid).toExist();
-        expect(data.numberOfBids).toExist();
-        expect(data.dateStart).toExist();
-        expect(data.dateEnd).toExist();
-        expect(data.dateCreated).toExist();
-        expect(data.subCategory).toExist();
-        expect(data.images).toExist();
-        expect(data.user).toExist();
+        verifyObjectPropertiesExist(data, [
+          "id",
+          "name",
+          "description",
+          "startBid",
+          "highestBid",
+          "numberOfBids",
+          "dateStart",
+          "dateEnd",
+          "dateCreated",
+          "subCategory",
+          "images",
+          "user",
+        ]);
       });
   });
 });
@@ -96,43 +88,35 @@ describe("Product API tests", () => {
   let idProduct = null;
 
   beforeAll(() => {
-    const getRandomNumber = () => {
-      let randomDecimal = Math.random();
-      let randomNumberInRange = Math.floor(randomDecimal * (42 - 23 + 1)) + 23;
-      return randomNumberInRange;
-    };
-    let randomNum = getRandomNumber();
-    idProduct = randomNum;
+    idProduct = getRandomNumber();
   });
-  it("Check status code", async () => {
-    await axios
-      .get(`http://localhost:8080/api/products/${idProduct}`)
-      .then(function (response) {
-        expect(response.status).toEqual(200);
+  it("Check status code - Product API", async () => {
+    await axios.get(`${API_BASE_URL}/products/${idProduct}`).then(function (response) {
+        verifyResponseStatus(response.status, 200);
       });
   });
-  it("Check object properties", async () => {
-    await axios
-      .get(`http://localhost:8080/api/products/${idProduct}`)
-      .then(function (response) {
+  it("Check object properties - Product API", async () => {
+    await axios.get(`${API_BASE_URL}/products/${idProduct}`).then(function (response) {
         let data = response.data;
-        expect(data.id).toExist();
-        expect(data.name).toExist();
-        expect(data.description).toExist();
-        expect(data.startBid).toExist();
-        expect(data.highestBid).toExist();
-        expect(data.numberOfBids).toExist();
-        expect(data.dateStart).toExist();
-        expect(data.dateEnd).toExist();
-        expect(data.dateCreated).toExist();
-        expect(data.subCategory).toExist();
-        expect(data.images).toExist();
-        expect(data.user).toExist();
+        verifyObjectPropertiesExist(data, [
+          "id",
+          "name",
+          "description",
+          "startBid",
+          "highestBid",
+          "numberOfBids",
+          "dateStart",
+          "dateEnd",
+          "dateCreated",
+          "subCategory",
+          "images",
+          "user",
+        ]);
       });
   });
-  it("Product with valid id is displayed", async () => {
+  it("Product with valid id is displayed - Product API", async () => {
     await axios
-      .get(`http://localhost:8080/api/products/${idProduct}`)
+      .get(`${API_BASE_URL}/products/${idProduct}`)
       .then(function (response) {
         let data = response.data;
         expect(data.id).toEqual(idProduct);
