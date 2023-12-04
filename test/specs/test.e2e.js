@@ -145,7 +145,7 @@ describe("Registration and Login API tests", () => {
       id_login = data.user.id
       verifyToEqual(response.status, 200);
       verifyObjectPropertiesExist(data, ["user", "token"]);
-      expect(id_login).toEqual(id)
+      verifyToEqual(id_login, id)
       });
     });
   });
