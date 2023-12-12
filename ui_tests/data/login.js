@@ -3,3 +3,12 @@ export const loginUser = {
   password: "Test123",
   name: "Ajla",
 };
+export const invalidEmail = {
+  email: "ajla",
+  errorEmail: "Please enter a valid email.",
+};
+export const invalidPassword = {
+  password: "1",
+  errorPassword: "Password must be at least 6 characters long."
+};
+

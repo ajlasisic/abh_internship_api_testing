@@ -22,7 +22,7 @@ export const config = {
     // will be called from there.
     //
     specs: [
-        './test/specs/**/*.js',
+        './api_tests/specs/**/*.js',
         './ui_tests/specs/**/*.js'
     ],
     // Patterns to exclude.
@@ -164,6 +164,31 @@ export const config = {
      * @param  {object} args     object that will be merged with the main configuration once worker is initialized
      * @param  {object} execArgv list of string arguments passed to the worker process
      */
+    onWorkerStart: function (cid, caps, specs, args, execArgv) {
+        // Check if the capabilities include 'api_tests'
+        const isAPITestSuite = specs.some(spec => spec.includes('api_tests'));
+    
+        // Debug logging
+        console.log('isAPITestSuite:', isAPITestSuite);
+    
+        // Modify capabilities based on test type
+        if (isAPITestSuite) {
+
+            // Check if Chrome options exist
+            if (!caps['goog:chromeOptions']) {
+                caps['goog:chromeOptions'] = {};
+            }
+            
+            caps['goog:chromeOptions'].args ??= [];
+            caps['goog:chromeOptions'].args.push('--headless');
+        }
+        else {
+            // Maximize the browser window for UI tests
+            caps['goog:chromeOptions'] = {
+                args: ['--start-maximized']
+            };
+        }
+    },
     // onWorkerStart: function (cid, caps, specs, args, execArgv) {
     // },
     /**
@@ -183,9 +208,9 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      * @param {string} cid worker id (e.g. 0-0)
      */
-    before() {
-        browser.maximizeWindow()
-        },
+    // before() {
+    //     browser.maximizeWindow()
+    //     },
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
     /**

@@ -15,12 +15,12 @@ class ProductPage extends Page {
     return names;
   }
 
-  async verifyProductNames() {
+  async verifyProductNames(term) {
     await this.waitForDisplayed(this.navigationPath);
     let test = [];
     test = await this.getProductNames();
     test.forEach((text) => {
-      expect(text).toContain(searchTerms.term);
+      expect(text).toContain(term);
     });
   }
 }

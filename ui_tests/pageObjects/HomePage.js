@@ -1,6 +1,4 @@
 import { $ } from "@wdio/globals";
-import { searchTerms } from "../data/search.js";
-import { loginUser } from "../data/login.js";
 import Page from "./Page.js";
 
 class HomePage extends Page {
@@ -20,15 +18,13 @@ class HomePage extends Page {
     return $(".text-white");
   }
 
-  async searchProduct() {
-    await this.inputSearch.addValue(searchTerms.term);
+  async searchProduct(term) {
+    await this.inputSearch.addValue(term);
     await this.searchIcon.click();
   }
-  async verifyWelcomeMessage() {
-    await this.waitForText(this.welcomeMessage, "Hi, " + loginUser.name);
-    await expect(await this.welcomeMessage.getText()).toEqual(
-      "Hi, " + loginUser.name
-    );
+  async verifyWelcomeMessage(name) {
+    await this.waitForText(this.welcomeMessage, "Hi, " + name);
+    await expect(await this.welcomeMessage.getText()).toEqual("Hi, " + name);
   }
 }
 export default new HomePage();

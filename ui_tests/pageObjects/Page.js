@@ -5,6 +5,9 @@ import { browser } from "@wdio/globals";
  * that is shared across all page objects
  */
 export default class Page {
+  get errorMessage() {
+    return $("div > .text-red-500");
+  }
   
   async waitForDisplayed(el) {
     await el.waitForDisplayed({ timeout: 10000 });
@@ -24,5 +27,10 @@ export default class Page {
     await browser.waitUntil(async function () {
       return (await el.isSelected()) === true;
     }, { timeout: 10000 });
+  }
+  
+  verifyErrorMsgText = async function (error,text) {
+    console.log(await error.getText(), text);
+    await expect(await error.getText()).toEqual(text);
   }
 }

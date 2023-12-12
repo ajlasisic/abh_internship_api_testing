@@ -1,16 +1,16 @@
-const getRandomNumber = () => {
+const generateRandomNumber = () => {
   let randomDecimal = Math.random();
   let randomNumberInRange = Math.floor(randomDecimal * (42 - 23 + 1)) + 23;
   return randomNumberInRange;
 };
 
-const getRandomEmail = function () {
+const generateRandomEmail = function () {
   let rndnum = Math.random();
   let emailValue = "random.test+" + rndnum + "@test.com";
   return emailValue;
 };
 
-function getRandomPassword() {
+function generateRandomPassword() {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let randomString = "";
@@ -33,9 +33,9 @@ const verifyToEqual = (first, second) => {
 };
 
 export {
-  getRandomNumber,
-  getRandomEmail,
-  getRandomPassword,
+  generateRandomNumber,
+  generateRandomEmail,
+  generateRandomPassword,
   verifyObjectPropertiesExist,
   verifyToEqual,
 };

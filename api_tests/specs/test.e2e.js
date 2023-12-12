@@ -1,7 +1,7 @@
 import { expect } from "@wdio/globals";
 import axios from "axios";
 import { API_AUTH_URL, API_BASE_URL } from "../../globals.js";
-import { getRandomEmail, getRandomNumber, getRandomPassword, verifyObjectPropertiesExist, verifyToEqual } from "../../apiUtils.js";
+import { generateRandomEmail, generateRandomNumber, generateRandomPassword, verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js"
 
 describe("Categories API tests", () => {
   it("Check status code - Categories API", async () => {
@@ -83,7 +83,7 @@ it("Check object properties - Random product API", async () => {
 let idProduct = null;
 
 beforeAll(() => {
-  idProduct = getRandomNumber();
+  idProduct = generateRandomNumber();
 });
 it("Check status code - Product API", async () => {
   await axios.get(`${API_BASE_URL}/products/${idProduct}`).then(function (response) {
@@ -117,8 +117,8 @@ it("Product with valid id is displayed - Product API", async () => {
 });
 });
 describe("Registration and Login API tests", () => {
-  let test_email = getRandomEmail()
-  let test_password = getRandomPassword()
+  let test_email = generateRandomEmail()
+  let test_password = generateRandomPassword()
   let id = null
   it("Check status code - Registration", async () => {
     await axios.post(`${API_AUTH_URL}/register`, {

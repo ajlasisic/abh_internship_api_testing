@@ -1,5 +1,4 @@
 import { $ } from "@wdio/globals";
-import { loginUser } from "../data/login.js";
 import Page from "./Page.js";
 import HomePage from "./HomePage.js";
 
@@ -14,11 +13,11 @@ class LoginPage extends Page {
     return $(".flex.flex-col.gap-10.py-8.px-12 > button");
   }
 
-  async login() {
+  async login(email, password) {
     await HomePage.loginLink.click();
     await this.waitForDisplayed(this.emailInput);
-    await this.emailInput.setValue(loginUser.email);
-    await this.passwordInput.setValue(loginUser.password);
+    await this.emailInput.setValue(email);
+    await this.passwordInput.setValue(password);
     await this.loginButton.click();
   }
 }
