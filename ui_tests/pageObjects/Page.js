@@ -29,8 +29,27 @@ export default class Page {
     }, { timeout: 10000 });
   }
   
-  verifyErrorMsgText = async function (error,text) {
+  async verifyErrorMsgText (error,text) {
     console.log(await error.getText(), text);
     await expect(await error.getText()).toEqual(text);
   }
+  async clickElement (element) {
+    await element.click()
+  };
+  async verifyAscendingArray(array){
+    let ascArray = []
+    array.forEach(element => {
+      ascArray.push(element)
+    }) 
+    let new_array = ascArray.sort(function(a, b){return a - b})
+    expect(array).toEqual(new_array)
+  };
+  async verifyDescendingArray(array){
+    let ascArray = []
+    array.forEach(element => {
+      ascArray.push(element)
+    }) 
+    let new_array = ascArray.sort(function(a, b){return b - a})
+    expect(array).toEqual(new_array)
+  };
 }
