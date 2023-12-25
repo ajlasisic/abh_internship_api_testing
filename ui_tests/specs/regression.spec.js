@@ -5,7 +5,6 @@ import LoginPage from "../pageObjects/LoginPage.js";
 import HomePage from "../pageObjects/HomePage.js";
 import ProductPage from "../pageObjects/ProductPage.js";
 import { footerLinks, socialMedia } from "../data/urls.js";
-import { waitForStableDOM } from "../../utils.js";
 
 describe("Regression test", () => {
   it("Login with incorrect email", async () => {
