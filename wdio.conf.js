@@ -22,7 +22,8 @@ export const config = {
     // will be called from there.
     //
     specs: [
-        './test/specs/**/*.js'
+        './api_tests/specs/**/*.js',
+        './ui_tests/specs/**/*.js'
     ],
     // Patterns to exclude.
     exclude: [
@@ -85,7 +86,7 @@ export const config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost:8080',
+    baseUrl: 'http://localhost:5173/',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -124,7 +125,9 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
+    reporters: ['spec', ['allure', {
+        outputDir: 'allure-results',
+    }]],
 
     // Options to be passed to Jasmine.
     jasmineOpts: {
@@ -163,6 +166,31 @@ export const config = {
      * @param  {object} args     object that will be merged with the main configuration once worker is initialized
      * @param  {object} execArgv list of string arguments passed to the worker process
      */
+    onWorkerStart: function (cid, caps, specs, args, execArgv) {
+        // Check if the capabilities include 'api_tests'
+        const isAPITestSuite = specs.some(spec => spec.includes('api_tests'));
+    
+        // Debug logging
+        console.log('isAPITestSuite:', isAPITestSuite);
+    
+        // Modify capabilities based on test type
+        if (isAPITestSuite) {
+
+            // Check if Chrome options exist
+            if (!caps['goog:chromeOptions']) {
+                caps['goog:chromeOptions'] = {};
+            }
+            
+            caps['goog:chromeOptions'].args ??= [];
+            caps['goog:chromeOptions'].args.push('--headless');
+        }
+        else {
+            // Maximize the browser window for UI tests
+            caps['goog:chromeOptions'] = {
+                args: ['--start-maximized']
+            };
+        }
+    },
     // onWorkerStart: function (cid, caps, specs, args, execArgv) {
     // },
     /**
@@ -182,6 +210,9 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      * @param {string} cid worker id (e.g. 0-0)
      */
+    // before() {
+    //     browser.maximizeWindow()
+    //     },
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
     /**
@@ -209,8 +240,9 @@ export const config = {
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
-    // beforeTest: function (test, context) {
-    // },
+    beforeTest: function (test, context) {
+        browser.url('/');
+     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
