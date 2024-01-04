@@ -22,7 +22,7 @@ class HomePage extends Page {
     return $(".text-white.flex.gap-10 > button");
   }
   get jewelryLink() {
-    return $(".bg-white.shadow-lightgrey > ul > li:nth-child(2)");
+    return $(".bg-white.shadow-lightgrey > ul > li:nth-child(3)");
   }
   get shopLink() {
     return $(".flex.gap-5.uppercase > li:nth-child(2) > a");

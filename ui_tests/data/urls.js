@@ -5,7 +5,7 @@ export const socialMedia = {
 };
 
 export const footerLinks = {
-  aboutUs: "http://localhost:5173/shop/about",
-  termsAndConditions: "http://localhost:5173/shop/terms",
-  privacyPolicy: "http://localhost:5173/shop/privacy",
+  aboutUs: "https://auction.praksa.abhapp.com/shop/about",
+  termsAndConditions: "https://auction.praksa.abhapp.com/shop/terms",
+  privacyPolicy: "https://auction.praksa.abhapp.com/shop/privacy",
 };
