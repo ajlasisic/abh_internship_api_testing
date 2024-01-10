@@ -1,7 +1,8 @@
 import { expect } from "@wdio/globals";
 import axios from "axios";
 import { API_AUTH_URL, API_BASE_URL } from "../../globals.js";
-import { generateRandomEmail, generateRandomId, generateRandomPassword, verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js";
+import { generateRandomId, verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js";
+import { invalidRegistrationData, validRegistrationData } from "../data/register.js";
 
 describe("Categories API tests", () => {
   it("Check status code - Categories API", async () => {
@@ -133,26 +134,23 @@ describe("Registration and Login API regression test", () => {
       }
     );
   });
-  let test_email = generateRandomEmail();
-  let test_password = generateRandomPassword();
   it("Registration with invalid email", async () => {
     let response;
     response = await axios.post(`${API_AUTH_URL}/register`, {
-      email: "test_email",
-      password: 123,
-      firstName: "Test",
-      lastName: "Testing",
+      email: invalidRegistrationData.email,
+      password: validRegistrationData.password,
+      firstName: validRegistrationData.firstName,
+      lastName: validRegistrationData.lastName,
     });
     let data = response.data;
     verifyToEqual(response.status, 400);
     verifyToEqual(data, "Could not create new user account");
   });
-  it("Registration without all body parameters", async () => {
+  it("Registration without firstName and lastName body properties", async () => {
     let response;
     response = await axios.post(`${API_AUTH_URL}/register`, {
-      email: "test_email",
-      password: test_password,
-      firstName: "Test",
+      email: validRegistrationData.email,
+      password: validRegistrationData.password,
     });
     let data = response.data;
     verifyToEqual(response.status, 400);
@@ -161,8 +159,8 @@ describe("Registration and Login API regression test", () => {
   it("Login with invalid email", async () => {
     let response;
     response = await axios.post(`${API_AUTH_URL}/login`, {
-      email: "test_email",
-      password: 123,
+      email: invalidRegistrationData.email,
+      password: validRegistrationData.password,
     });
     let data = response.data;
     verifyToEqual(response.status, 401);
@@ -171,8 +169,8 @@ describe("Registration and Login API regression test", () => {
   it("Login with invalid password", async () => {
     let response;
     response = await axios.post(`${API_AUTH_URL}/login`, {
-      email: test_email,
-      password: 123,
+      email: validRegistrationData.email,
+      password: invalidRegistrationData.password,
     });
     let data = response.data;
     verifyToEqual(response.status, 401);

@@ -1,18 +1,18 @@
 import axios from "axios";
 import { API_AUTH_URL, API_BASE_URL } from "../../globals.js";
 import { verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js"
-import { registerValidData } from "../data/register.js";
+import { validRegistrationData } from "../data/register.js";
 
 describe("API smoke test", () => {
-    let test_email = registerValidData.email
-    let test_password = registerValidData.password
+    let test_email = validRegistrationData.email
+    let test_password = validRegistrationData.password
     let id = null
     it("Register new user", async () => {
       await axios.post(`${API_AUTH_URL}/register`, {
         email: test_email,
         password: test_password,
-        firstName: registerValidData.firstName,
-        lastName: registerValidData.lastName
+        firstName: validRegistrationData.firstName,
+        lastName: validRegistrationData.lastName
       })
       .then(function (response) {
         let data = response.data;
