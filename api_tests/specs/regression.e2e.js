@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_AUTH_URL, API_BASE_URL } from "../../globals.js";
 import { generateRandomId, verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js";
 import { invalidRegistrationData, validRegistrationData } from "../data/register.js";
+import { validLoginUser } from "../data/login.js"
 
 describe("Categories API tests", () => {
   it("Check status code - Categories API", async () => {
@@ -117,23 +118,85 @@ it("Product with valid id is displayed - Product API", async () => {
     });
 });
 });
-describe("Registration and Login API regression test", () => {
-  beforeEach(() => {
-    axios.interceptors.response.use(
+describe("Bids API", () => {
+  let interceptor;
+  beforeEach(()=> {
+    interceptor = axios.interceptors.response.use(
+      (res) => res,
+      (error) => {
+        if (error.response && error.response.status === 403) {
+          return Promise.resolve({ status: 403 });
+        }
+        else if (error.response && error.response.status === 400) {
+          return Promise.resolve({
+            status: 400,
+            data: "Invalid bid."
+          });
+        } 
+        return Promise.reject(error);
+      });
+  });
+  afterEach(() => {
+    axios.interceptors.response.eject(interceptor);
+  });
+
+  let idProduct=242
+  it("Place bid without login - Bids API", async () => {
+    let new_bid = -1
+      await axios.post(`${API_BASE_URL}/bids`, {
+        bid: new_bid,
+        productId: idProduct
+      }).then(function (response) {
+          verifyToEqual(response.status, 403);
+      });
+  })
+  it("Place bid less than highest bid - Bids API", async () => {
+      let token = null
+      await axios.post(`${API_AUTH_URL}/login`, {
+        email: validLoginUser.email,
+        password: validLoginUser.password
+      })
+      .then(function (response) {
+        let data = response.data;
+        token = data.token
+        verifyToEqual(response.status, 200);
+        });
+        let new_bid = -1
+        await axios.post(`${API_BASE_URL}/bids`, {
+          bid: new_bid,
+          productId: idProduct
+        }, {headers: {
+          'Authorization': `Bearer ${token}`
+        }
+        }).then(function (response) {
+            let data = response.data
+            verifyToEqual(response.status, 400);
+            verifyToEqual(data, "Invalid bid.")
+        });
+    })
+  })
+describe("Registration and Login API", () => {
+  let interceptor;
+  beforeEach(()=> {
+    interceptor = axios.interceptors.response.use(
       (res) => res,
       (error) => {
         if (error.response && error.response.status === 401) {
-          return Promise.resolve({ status: 401, data: "Could not log in" });
-        } else if (error.response && error.response.status === 400) {
+          return Promise.resolve({ status: 401, data: "Could not log in"});
+        }
+        else if (error.response && error.response.status === 400) {
           return Promise.resolve({
             status: 400,
-            data: "Could not create new user account",
+            data: "Could not create new user account"
           });
-        }
+        } 
         return Promise.reject(error);
-      }
-    );
+      });
   });
+  afterEach(() => {
+    axios.interceptors.response.eject(interceptor);
+  });
+
   it("Registration with invalid email", async () => {
     let response;
     response = await axios.post(`${API_AUTH_URL}/register`, {
