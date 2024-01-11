@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_AUTH_URL, API_BASE_URL } from "../../globals.js";
 import { generateRandomId, verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js";
 import { invalidRegistrationData, validRegistrationData } from "../data/register.js";
-import { validLoginUser } from "../data/login.js"
+import { validLoginUser } from "../data/login.js";
 
 describe("Categories API tests", () => {
   it("Check status code - Categories API", async () => {
@@ -132,7 +132,7 @@ describe("Bids API", () => {
             status: 400,
             data: "Invalid bid."
           });
-        } 
+        }
         return Promise.reject(error);
       });
   });
@@ -177,21 +177,25 @@ describe("Bids API", () => {
   })
 describe("Registration and Login API", () => {
   let interceptor;
-  beforeEach(()=> {
+  beforeEach(() => {
     interceptor = axios.interceptors.response.use(
       (res) => res,
       (error) => {
         if (error.response && error.response.status === 401) {
-          return Promise.resolve({ status: 401, data: "Could not log in"});
-        }
-        else if (error.response && error.response.status === 400) {
+          return Promise.resolve({ status: 401, data: "Could not log in" });
+        } else if (error.response && error.response.status === 400) {
           return Promise.resolve({
             status: 400,
-            data: "Could not create new user account"
+            data: "Could not create new user account",
           });
-        } 
+        } else if (error.response && error.response.status === 500) {
+          return Promise.resolve({
+            status: 500,
+          });
+        }
         return Promise.reject(error);
-      });
+      }
+    );
   });
   afterEach(() => {
     axios.interceptors.response.eject(interceptor);
@@ -238,5 +242,16 @@ describe("Registration and Login API", () => {
     let data = response.data;
     verifyToEqual(response.status, 401);
     verifyToEqual(data, "Could not log in");
+  });
+  it("Validate incorrect token", async () => {
+    let response;
+    response = await axios.get(`${API_AUTH_URL}/validate`, {
+      params: {
+        token: 123,
+      },
+    });
+    let data = response.data;
+    console.log(data);
+    verifyToEqual(response.status, 401);
   });
 });
