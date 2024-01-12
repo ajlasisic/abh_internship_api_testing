@@ -52,8 +52,6 @@ export async function validateIncorrectToken() {
       token: invalidLoginUser.token,
     },
   });
-  let data = response.data;
-  console.log(data);
   verifyToEqual(response.status, 401);
 }
 
