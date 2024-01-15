@@ -3,9 +3,9 @@ import axios from "axios";
 import { API_BASE_URL } from "../../globals.js";
 import { verifyObjectPropertiesExist, verifyToEqual } from "../../utils.js";
 
-export async function checkStatusCodeProductsAPI() {
+export async function checkStatusCodeProductsAPI(statusCode=200) {
   let response = await axios.get(`${API_BASE_URL}/products`);
-  verifyToEqual(response.status, 200);
+  verifyToEqual(response.status, statusCode);
 }
 
 export async function checkObjectPropertiesProductsAPI() {
@@ -40,15 +40,14 @@ export async function endDateGreaterThanStartDate() {
   });
 }
 
-export async function checkStatusCodeRandomProductAPI() {
+export async function checkStatusCodeRandomProductAPI(statusCode=200) {
   let response = await axios.get(`${API_BASE_URL}/products/random`);
-  verifyToEqual(response.status, 200);
+  verifyToEqual(response.status, statusCode);
 }
 
 export async function checkObjectPropertiesRandomProductAPI() {
   let response = await axios.get(`${API_BASE_URL}/products/random`);
-  let data = response.data;
-  verifyObjectPropertiesExist(data, [
+  verifyObjectPropertiesExist(response.data, [
     "id",
     "name",
     "description",
@@ -64,15 +63,14 @@ export async function checkObjectPropertiesRandomProductAPI() {
   ]);
 }
 
-export async function checkStatusCodeProductAPI(idProduct) {
+export async function checkStatusCodeProductAPI(idProduct, statusCode=200) {
   let response = await axios.get(`${API_BASE_URL}/products/${idProduct}`);
-  verifyToEqual(response.status, 200);
+  verifyToEqual(response.status, statusCode);
 }
 
 export async function checkObjectPropertiesProductAPI(idProduct) {
   let response = await axios.get(`${API_BASE_URL}/products/${idProduct}`);
-  let data = response.data;
-  verifyObjectPropertiesExist(data, [
+  verifyObjectPropertiesExist(response.data, [
     "id",
     "name",
     "description",

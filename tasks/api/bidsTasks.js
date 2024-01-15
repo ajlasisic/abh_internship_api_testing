@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL, API_AUTH_URL } from "../../globals.js";
 import { verifyToEqual } from "../../utils.js";
-import { validLoginUser } from "../../api_tests/data/login.js";
+import { validLoginData } from "../../api_tests/data/login.js";
 import { invalidBid, validProductId } from "../../api_tests/data/bids.js";
 
 export async function placeBidWithoutLogin() {
@@ -17,8 +17,8 @@ export async function placeBidLessThanHighestBid() {
   let token = null;
 
   let response = await axios.post(`${API_AUTH_URL}/login`, {
-    email: validLoginUser.email,
-    password: validLoginUser.password,
+    email: validLoginData.email,
+    password: validLoginData.password,
   });
   let data = response.data;
   token = data.token;

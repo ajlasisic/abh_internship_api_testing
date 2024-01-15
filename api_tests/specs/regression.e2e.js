@@ -2,8 +2,10 @@ import axios from "axios";
 import * as CategoriesAPI from "../../tasks/api/categoriesTasks.js";
 import * as ProductsAPI from "../../tasks/api/productsTasks.js";
 import * as BidsAPI from "../../tasks/api/bidsTasks.js";
-import * as RegisterAndLoginAPI from "../../tasks/api/registerAndLoginTasks.js"
+import * as AuthAPI from "../../tasks/api/authTasks.js";
 import { generateRandomId } from "../../utils.js";
+import { invalidRegistrationData, validRegistrationData } from "../data/register.js";
+import { invalidLoginData, validLoginData } from "../data/login.js";
 
 describe("Categories API tests", () => {
   it("Check status code - Categories API", async () => {
@@ -19,28 +21,28 @@ describe("Product API tests", () => {
   let idProduct = null;
 
   beforeAll(() => {
-  idProduct = generateRandomId();
+    idProduct = generateRandomId();
   });
-    it("Check status code - Products API", async () => {
-      await ProductsAPI.checkStatusCodeProductsAPI();
-    });
-  
-    it("Check object properties - Products API", async () => {
-      await ProductsAPI.checkObjectPropertiesProductsAPI();
-    });
-  
-    it("End date greater than start date - Products API", async () => {
-      await ProductsAPI.endDateGreaterThanStartDate();
-    });
-  
-    it("Check status code - Random Product API", async () => {
-      await ProductsAPI.checkStatusCodeRandomProductAPI();
-    });
-  
-    it("Check object properties - Random Product API", async () => {
-      await ProductsAPI.checkObjectPropertiesRandomProductAPI();
-    });
-  
+  it("Check status code - Products API", async () => {
+    await ProductsAPI.checkStatusCodeProductsAPI();
+  });
+
+  it("Check object properties - Products API", async () => {
+    await ProductsAPI.checkObjectPropertiesProductsAPI();
+  });
+
+  it("End date greater than start date - Products API", async () => {
+    await ProductsAPI.endDateGreaterThanStartDate();
+  });
+
+  it("Check status code - Random Product API", async () => {
+    await ProductsAPI.checkStatusCodeRandomProductAPI();
+  });
+
+  it("Check object properties - Random Product API", async () => {
+    await ProductsAPI.checkObjectPropertiesRandomProductAPI();
+  });
+
   it("Check status code - Product API", async () => {
     await ProductsAPI.checkStatusCodeProductAPI(idProduct);
   });
@@ -56,21 +58,21 @@ describe("Product API tests", () => {
 
 describe("Bids API", () => {
   let interceptor;
-  beforeEach(()=> {
+  beforeEach(() => {
     interceptor = axios.interceptors.response.use(
       (res) => res,
       (error) => {
         if (error.response && error.response.status === 403) {
           return Promise.resolve({ status: 403 });
-        }
-        else if (error.response && error.response.status === 400) {
+        } else if (error.response && error.response.status === 400) {
           return Promise.resolve({
             status: 400,
-            data: "Invalid bid."
+            data: "Invalid bid.",
           });
         }
         return Promise.reject(error);
-      });
+      }
+    );
   });
   afterEach(() => {
     axios.interceptors.response.eject(interceptor);
@@ -82,9 +84,8 @@ describe("Bids API", () => {
   it("Place bid less than highest bid", async () => {
     await BidsAPI.placeBidLessThanHighestBid();
   });
-
-})
-describe("Registration and Login API", () => {
+});
+describe("Auth API", () => {
   let interceptor;
   beforeEach(() => {
     interceptor = axios.interceptors.response.use(
@@ -110,22 +111,46 @@ describe("Registration and Login API", () => {
     axios.interceptors.response.eject(interceptor);
   });
   it("Registration with invalid email", async () => {
-    await RegisterAndLoginAPI.registrationWithInvalidEmail();
+    await AuthAPI.registerUser(
+      invalidRegistrationData.email,
+      validRegistrationData.password,
+      validRegistrationData.firstName,
+      validRegistrationData.lastName,
+      400,
+      "Could not create new user account"
+  );
   });
 
-  it("Registration without firstName and lastName", async () => {
-    await RegisterAndLoginAPI.registerWithoutFirstNameAndLastName();
+  it("Registration without email", async () => {
+    await AuthAPI.registerUser(
+      null,
+      validRegistrationData.password,
+      validRegistrationData.firstName,
+      validRegistrationData.lastName,
+      400,
+      "Could not create new user account"
+    );
   });
 
   it("Login with invalid email", async () => {
-    await RegisterAndLoginAPI.loginWithInvalidEmail();
+    await AuthAPI.loginUser(
+      invalidLoginData.email,
+      validLoginData.password,
+      401,
+      "Could not log in"
+  );
   });
 
   it("Login with invalid password", async () => {
-    await RegisterAndLoginAPI.loginWithInvalidPassword();
+    await AuthAPI.loginUser(
+      validLoginData.email,
+      invalidLoginData.password,
+      401,
+      "Could not log in"
+    );
   });
 
   it("Validate incorrect token", async () => {
-    await RegisterAndLoginAPI.validateIncorrectToken();
+    await AuthAPI.validateToken(invalidLoginData.token, 401)
   });
 });
