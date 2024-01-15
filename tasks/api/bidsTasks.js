@@ -1,38 +1,19 @@
 import axios from "axios";
 import { API_BASE_URL, API_AUTH_URL } from "../../globals.js";
 import { verifyToEqual } from "../../utils.js";
-import { validLoginData } from "../../api_tests/data/login.js";
-import { invalidBid, validProductId } from "../../api_tests/data/bids.js";
 
-export async function placeBidWithoutLogin() {
+export async function placeBid({bid, productId, token, responseStatus=200, responseData}) { 
   let response = await axios.post(`${API_BASE_URL}/bids`, {
-    bid: invalidBid.bid,
-    productId: validProductId.productId,
-  });
-
-  verifyToEqual(response.status, 403);
-}
-
-export async function placeBidLessThanHighestBid() {
-  let token = null;
-
-  let response = await axios.post(`${API_AUTH_URL}/login`, {
-    email: validLoginData.email,
-    password: validLoginData.password,
-  });
-  let data = response.data;
-  token = data.token;
-
-  response = await axios.post(`${API_BASE_URL}/bids`, {
-      bid: invalidBid.bid,
-      productId: validProductId.productId,
+    bid: bid,
+    productId: productId,
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  verifyToEqual(response.status, 400);
-  verifyToEqual(response.data, "Invalid bid.");
+  });
+  verifyToEqual(response.status, responseStatus);
+  if(responseData){
+    verifyToEqual(response.data, responseData)
+  }
+  return response
 }

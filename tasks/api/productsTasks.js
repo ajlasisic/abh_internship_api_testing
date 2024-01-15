@@ -66,6 +66,7 @@ export async function checkObjectPropertiesRandomProductAPI() {
 export async function checkStatusCodeProductAPI(idProduct, statusCode=200) {
   let response = await axios.get(`${API_BASE_URL}/products/${idProduct}`);
   verifyToEqual(response.status, statusCode);
+  return response
 }
 
 export async function checkObjectPropertiesProductAPI(idProduct) {

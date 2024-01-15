@@ -6,6 +6,8 @@ import * as AuthAPI from "../../tasks/api/authTasks.js";
 import { generateRandomId } from "../../utils.js";
 import { invalidRegistrationData, validRegistrationData } from "../data/register.js";
 import { invalidLoginData, validLoginData } from "../data/login.js";
+import { invalidBid, validProductId } from "../data/bids.js";
+import {loginAndCreateHigherBid} from "../../states/api/apiStates.js"
 
 describe("Categories API tests", () => {
   it("Check status code - Categories API", async () => {
@@ -78,11 +80,25 @@ describe("Bids API", () => {
     axios.interceptors.response.eject(interceptor);
   });
   it("Place bid without login", async () => {
-    await BidsAPI.placeBidWithoutLogin();
+    await BidsAPI.placeBid({
+      bid:invalidBid.bid,
+      productId: validProductId.productId,
+      responseStatus: 403 
+    })
   });
 
   it("Place bid less than highest bid", async () => {
-    await BidsAPI.placeBidLessThanHighestBid();
+    let { token, idProduct } = await loginAndCreateHigherBid(
+      validLoginData.email,
+      validLoginData.password
+    );
+    await BidsAPI.placeBid({
+      bid: invalidBid.bid,
+      productId: idProduct,
+      responseStatus: 400,
+      responseData: "Invalid bid.",
+      token
+    })
   });
 });
 describe("Auth API", () => {
@@ -111,43 +127,42 @@ describe("Auth API", () => {
     axios.interceptors.response.eject(interceptor);
   });
   it("Registration with invalid email", async () => {
-    await AuthAPI.registerUser(
-      invalidRegistrationData.email,
-      validRegistrationData.password,
-      validRegistrationData.firstName,
-      validRegistrationData.lastName,
-      400,
-      "Could not create new user account"
-  );
+    await AuthAPI.registerUser({
+      email: invalidRegistrationData.email,
+      password: validRegistrationData.password,
+      firstName: validRegistrationData.firstName,
+      lastName: validRegistrationData.lastName,
+      statusCode: 400,
+      responseData: "Could not create new user account"
+    });
   });
 
   it("Registration without email", async () => {
-    await AuthAPI.registerUser(
-      null,
-      validRegistrationData.password,
-      validRegistrationData.firstName,
-      validRegistrationData.lastName,
-      400,
-      "Could not create new user account"
-    );
+    await AuthAPI.registerUser({
+      password: validRegistrationData.password,
+      firstName: validRegistrationData.firstName,
+      lastName: validRegistrationData.lastName,
+      statusCode: 400,
+      responseData: "Could not create new user account"
+  });
   });
 
   it("Login with invalid email", async () => {
-    await AuthAPI.loginUser(
-      invalidLoginData.email,
-      validLoginData.password,
-      401,
-      "Could not log in"
-  );
+    await AuthAPI.loginUser({
+      email:invalidLoginData.email,
+      password: validLoginData.password,
+      statusCode: 401,
+      responseData: "Could not log in"
+    });
   });
 
   it("Login with invalid password", async () => {
-    await AuthAPI.loginUser(
-      validLoginData.email,
-      invalidLoginData.password,
-      401,
-      "Could not log in"
-    );
+    await AuthAPI.loginUser({
+      email: validLoginData.email,
+      password: invalidLoginData.password,
+      statusCode: 401,
+      responseData: "Could not log in"
+  });
   });
 
   it("Validate incorrect token", async () => {
