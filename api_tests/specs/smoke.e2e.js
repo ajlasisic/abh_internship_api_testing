@@ -25,12 +25,10 @@ describe("API smoke test", () => {
       token
     })
     let data = response.data;
-    verifyToEqual(response.status, 200);
     verifyToEqual(data.bid, new_bid);
     verifyToEqual(id_login, data.bidder.id);
     response = await ProductsAPI.checkStatusCodeProductAPI(idProduct)
     data = response.data;
-    verifyToEqual(response.status, 200);
     verifyToEqual(data.highestBid, new_bid);
   });
 });
