@@ -8,5 +8,9 @@ export const loginUser = async (email, password) => {
   };
 export const registerUser = async (firstName, lastName, email, password) => {
     await HomePage.registerLink.click();
-    await RegisterPage.register(firstName, lastName, email,password)
+    await RegisterPage.register(firstName, lastName, email, password)
+  };
+export const logoutUser = async () => {
+  await HomePage.clickElement(HomePage.logoutButton);
+  await HomePage.verifyLogout();
   };

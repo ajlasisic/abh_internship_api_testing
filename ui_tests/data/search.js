@@ -1,3 +1,4 @@
 export const searchTerms = {
-  term: "Floral",
+  floral: "Floral",
+  men: "Men"
 };

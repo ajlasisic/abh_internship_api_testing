@@ -1,31 +1,30 @@
 import HomePage from "../pageObjects/HomePage.js";
 import ProductPage from "../pageObjects/ProductPage.js";
-import { loginUser } from "../data/login.js";
 import { searchTerms } from "../data/search.js";
 import { registerUser } from "../data/register.js";
 import * as AuthTasks from "../../tasks/ui/authTasks.js"
+import { searchAndNavigateToProduct } from "../../states/ui/uiStates.js";
 
 describe("Smoke test", () => {
   beforeEach(function () {
     browser.url('/');
   });
+  let test_email = registerUser.email
+  let test_password = registerUser.password
   it("Register and logout", async () => {
     await AuthTasks.registerUser(
       registerUser.firstName,
       registerUser.lastName,
-      registerUser.email,
-      registerUser.password
+      test_email,
+      test_password
     );
-    await HomePage.verifyWelcomeMessage(registerUser.firstName);
-    await HomePage.clickElement(HomePage.logoutButton);
-    await HomePage.verifyLogout();
+    await HomePage.verifyWelcomeMessage(registerUser.firstName)
+    await AuthTasks.logoutUser()
   });
   it("Login, search product and place bid", async () => {
-    await AuthTasks.loginUser(loginUser.email, loginUser.password)
-    await HomePage.verifyWelcomeMessage(loginUser.name);
-    await HomePage.searchProduct(searchTerms.term);
-    await ProductPage.verifyProductNames(searchTerms.term);
-    await ProductPage.clickElement(ProductPage.productName);
+    await AuthTasks.loginUser(test_email, test_password)
+    await HomePage.verifyWelcomeMessage(registerUser.firstName);
+    await searchAndNavigateToProduct(searchTerms.floral, ProductPage.productName);
     await ProductPage.placeBid();
   });
 });

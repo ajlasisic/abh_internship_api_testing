@@ -6,6 +6,7 @@ import HomePage from "../pageObjects/HomePage.js";
 import ProductPage from "../pageObjects/ProductPage.js";
 import { footerLinks, socialMedia } from "../data/urls.js";
 import * as AuthTasks from "../../tasks/ui/authTasks.js"
+import { searchTerms } from "../data/search.js";
 
 describe("Regression test", () => {
   beforeEach(function () {
@@ -30,6 +31,10 @@ describe("Regression test", () => {
   it("Check empty category message", async () => {
     await HomePage.clickElement(HomePage.jewelryLink)
     await ProductPage.verifyEmptyCategoryMsg()
+  });
+  it("Check search product's titles", async () => {
+    await HomePage.searchProduct(searchTerms.men);
+    await ProductPage.verifyProductNames(searchTerms.men);
   });
   it("Check biding functionality - guest user", async () => {
     await HomePage.clickElement(HomePage.bidButtonRandomProduct)
