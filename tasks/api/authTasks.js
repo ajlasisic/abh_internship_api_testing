@@ -27,9 +27,10 @@ export async function loginUser({email, password, statusCode = 200, responseData
 }
 
 export async function validateToken(token, statusCode) {
-  let response = await axios.get(`${API_AUTH_URL}/validate`, {
+  let response = await axios.get(`${API_AUTH_URL}/validate`, {},
+  {
     params: {
-      token: token,
+      token,
     },
   });
   verifyToEqual(response.status, statusCode);
