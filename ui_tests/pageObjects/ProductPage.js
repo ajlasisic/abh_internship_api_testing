@@ -73,6 +73,10 @@ class ProductPage extends Page {
     let newBid = await generateHigherBid(this.highestBid)
     await this.enterBid.setValue(newBid)
     await this.clickElement(this.placeBidButton)
+    await this.highestBid.waitUntil(async function () {
+      const currentBidText = await this.getText();
+      return currentBidText === '$' + newBid.toString() + '.00';
+  }, { timeout: 10000 });
     let newHighestBid = await convertPriceToNumber(this.highestBid)
     await verifyToEqual(newHighestBid, newBid)
   }
