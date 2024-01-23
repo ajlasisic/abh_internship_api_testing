@@ -1,6 +1,5 @@
 import { $ } from "@wdio/globals";
 import Page from "./Page.js";
-import HomePage from "./HomePage.js";
 
 class LoginPage extends Page {
   get emailInput() {
@@ -14,7 +13,6 @@ class LoginPage extends Page {
   }
 
   async login(email, password) {
-    await HomePage.loginLink.click();
     await this.waitForDisplayed(this.emailInput);
     await this.emailInput.setValue(email);
     await this.passwordInput.setValue(password);

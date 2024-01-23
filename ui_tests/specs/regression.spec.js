@@ -5,30 +5,36 @@ import LoginPage from "../pageObjects/LoginPage.js";
 import HomePage from "../pageObjects/HomePage.js";
 import ProductPage from "../pageObjects/ProductPage.js";
 import { footerLinks, socialMedia } from "../data/urls.js";
+import * as AuthTasks from "../../tasks/ui/authTasks.js"
+import { searchTerms } from "../data/search.js";
 
 describe("Regression test", () => {
   beforeEach(function () {
         browser.url('/');
   });
   it("Login with incorrect email", async () => {
-    await LoginPage.login(invalidEmail.email, loginUser.password);
+    await AuthTasks.loginUser(invalidEmail.email, loginUser.password)
     await LoginPage.verifyErrorMsgText(LoginPage.errorMessage, invalidEmail.errorEmail)
   });
   it("Login with incorrect password", async () => {
-    await LoginPage.login(loginUser.email, invalidPassword.password);
+    await AuthTasks.loginUser(loginUser.email, invalidPassword.password);
     await LoginPage.verifyErrorMsgText(LoginPage.errorMessage, invalidPassword.errorPassword)
   });
   it("Register with existing email", async () => {
-    await RegisterPage.register(existingUser.firstName, existingUser.lastName, existingUser.email, existingUser.password)
+    await AuthTasks.registerUser(existingUser.firstName, existingUser.lastName, existingUser.email, existingUser.password)
     await RegisterPage.verifyErrorMsgText(RegisterPage.errorMessage, existingUser.errorMsg)
   });
   it("Register with weak password", async () => {
-    await RegisterPage.register(registerUser.firstName, registerUser.lastName, registerUser.email, invalidPassword.password)
+    await AuthTasks.registerUser(registerUser.firstName, registerUser.lastName, registerUser.email, invalidPassword.password)
     await RegisterPage.verifyErrorMsgText(RegisterPage.errorMessage, invalidPassword.errorPassword)
   });
-  it("Check Jewelry section", async () => {
+  it("Check empty category message", async () => {
     await HomePage.clickElement(HomePage.jewelryLink)
     await ProductPage.verifyEmptyCategoryMsg()
+  });
+  it("Check search product's titles", async () => {
+    await HomePage.searchProduct(searchTerms.men);
+    await ProductPage.verifyProductNames(searchTerms.men);
   });
   it("Check biding functionality - guest user", async () => {
     await HomePage.clickElement(HomePage.bidButtonRandomProduct)

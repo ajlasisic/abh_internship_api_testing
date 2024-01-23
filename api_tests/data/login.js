@@ -1,5 +1,5 @@
 export const validLoginData = {
-    email: "ajla.sisic@stu.ibu.edu.ba",
+    email: "ajla.test@testing.com",
     password: "Test123",
 };
 export const invalidLoginData = {

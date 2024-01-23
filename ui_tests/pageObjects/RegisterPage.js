@@ -1,6 +1,5 @@
 import { $ } from "@wdio/globals";
 import Page from "./Page.js";
-import HomePage from "./HomePage.js";
 
 class RegisterPage extends Page {
   get inputFirstName() {
@@ -20,7 +19,6 @@ class RegisterPage extends Page {
   }
 
   async register(firstName, lastName, email, password) {
-    await HomePage.registerLink.click();
     await this.inputFirstName.setValue(firstName);
     await this.inputLastName.setValue(lastName);
     await this.inputEmail.setValue(email);

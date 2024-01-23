@@ -167,16 +167,10 @@ export const config = {
      * @param  {object} execArgv list of string arguments passed to the worker process
      */
     onWorkerStart: function (cid, caps, specs, args, execArgv) {
-        // Check if the capabilities include 'api_tests'
         const isAPITestSuite = specs.some(spec => spec.includes('api_tests'));
-    
-        // Debug logging
-        console.log('isAPITestSuite:', isAPITestSuite);
-    
-        // Modify capabilities based on test type
+
         if (isAPITestSuite) {
 
-            // Check if Chrome options exist
             if (!caps['goog:chromeOptions']) {
                 caps['goog:chromeOptions'] = {};
             }
@@ -185,7 +179,6 @@ export const config = {
             caps['goog:chromeOptions'].args.push('--headless');
         }
         else {
-            // Maximize the browser window for UI tests
             caps['goog:chromeOptions'] = {
                 args: ['--start-maximized']
             };
@@ -241,7 +234,6 @@ export const config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     // beforeTest: function (test, context) {
-    //     browser.url('/');
     //  },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
